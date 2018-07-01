@@ -1,11 +1,11 @@
-import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
-import { createHashHistory } from 'history';
-import { routerMiddleware, push } from 'react-router-redux';
-import { createLogger } from 'redux-logger';
-import rootReducer from '../reducers';
-
-import * as counterActions from '../actions/counter';
+import { applyMiddleware, compose, createStore } from "redux";
+import reduxThunk from "redux-thunk";
+import { createHashHistory } from "history";
+import { push, routerMiddleware } from "react-router-redux";
+import { createLogger } from "redux-logger";
+import reducers from "../reducers";
+import createSagaMiddleware from "redux-saga";
+import sagas from "../sagas";
 
 declare const window: Window & {
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?(a: any): void;
@@ -17,18 +17,20 @@ declare const module: NodeModule & {
   }
 };
 
-const actionCreators = Object.assign({}, 
-  counterActions,
-  {push}
+const actionCreators = Object.assign({},
+  { push }
 );
 
 const logger = (<any>createLogger)({
-  level: 'info',
+  level: "info",
   collapsed: true
 });
 
 const history = createHashHistory();
 const router = routerMiddleware(history);
+
+// Saga middleware
+const sagaMiddleware = createSagaMiddleware();
 
 // If Redux DevTools Extension is installed use it, otherwise use Redux compose
 /* eslint-disable no-underscore-dangle */
@@ -40,19 +42,22 @@ const composeEnhancers: typeof compose = window.__REDUX_DEVTOOLS_EXTENSION_COMPO
   compose;
 /* eslint-enable no-underscore-dangle */
 const enhancer = composeEnhancers(
-  applyMiddleware(thunk, router, logger)
+  applyMiddleware(reduxThunk, router, logger, sagaMiddleware)
 );
 
 export = {
   history,
   configureStore(initialState: Object | void) {
-    const store = createStore(rootReducer, initialState, enhancer);
+    const store = createStore(reducers, initialState, enhancer);
 
     if (module.hot) {
-      module.hot.accept('../reducers', () =>
-        store.replaceReducer(require('../reducers')) // eslint-disable-line global-require
+      module.hot.accept("../reducers", () =>
+        store.replaceReducer(require("../reducers")) // eslint-disable-line global-require
       );
     }
+
+    // Run saga
+    sagaMiddleware.run(sagas);
 
     return store;
   }
