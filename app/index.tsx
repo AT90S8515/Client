@@ -1,30 +1,33 @@
-import * as React from "react";
-import { render } from "react-dom";
-import { AppContainer } from "react-hot-loader";
-import Root from "./containers/Root";
-import "./app.global.scss";
+import LocalStorage from './LocalStorage';
+import * as React from 'react';
+import { render } from 'react-dom';
+import { AppContainer } from 'react-hot-loader';
+import Root from './containers/Root';
+import './app.global.scss';
 
-require("dotenv").config();
+require('dotenv').config();
 
-const { configureStore, history } = require("./store/configureStore");
+const { configureStore, history } = require('./store/configureStore');
 const store = configureStore();
+
+LocalStorage.instance.initialize();
 
 render(
   <AppContainer>
     <Root store={store} history={history}/>
   </AppContainer>,
-  document.getElementById("root")
+  document.getElementById('root'),
 );
 
 if ((module as any).hot) {
-  (module as any).hot.accept("./containers/Root", () => {
+  (module as any).hot.accept('./containers/Root', () => {
     // tslint:disable-next-line:variable-name
-    const NextRoot = require("./containers/Root").default;
+    const NextRoot = require('./containers/Root').default;
     render(
       <AppContainer>
         <NextRoot store={store} history={history}/>
       </AppContainer>,
-      document.getElementById("root")
+      document.getElementById('root'),
     );
   });
 }

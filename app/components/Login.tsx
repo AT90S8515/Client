@@ -1,24 +1,32 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { AuthState } from '../reducers/auth';
+import { login } from '../actions/auth';
 import Button from './UI/Button';
-import { Link } from 'react-router-dom';
+import { Formik, FormikProps, Form, Field, FieldProps } from 'formik';
+import * as Yup from 'yup';
+import LocalStorage from '../LocalStorage';
 
 const styles = require('./Login.scss');
 
-export interface IProps extends RouteComponentProps<any>, AuthState {
-  login({}): void;
+export interface IProps extends AuthState {
+  login: typeof login;
 }
 
 export interface IState {
   muted: boolean;
 }
 
+interface IFormValues {
+  username: string;
+  password: string;
+  rememberMe: boolean;
+}
+
 class Login extends React.Component<IProps, IState> {
   private backgroundVideo: HTMLVideoElement | null;
 
   public state = {
-    muted: false,
+    muted: LocalStorage.instance.data!.loginMusicMuted,
   };
 
   private handleVideoRef = (ref: HTMLVideoElement | null) => {
@@ -33,6 +41,24 @@ class Login extends React.Component<IProps, IState> {
   private handleMutedChange = (checked: boolean) => {
     this.setState({ muted: checked });
     this.backgroundVideo!.volume = checked ? 0.0 : 0.2;
+    LocalStorage.instance.mutateAndSave((data) => {
+      data.loginMusicMuted = checked;
+      return data;
+    });
+  }
+
+  private handleLogIn = (values: IFormValues) => {
+    if (values.rememberMe) {
+      LocalStorage.instance.mutateAndSave((data) => {
+        data.username = values.username;
+        return data;
+      });
+    }
+
+    this.props.login({
+      username: values.username,
+      password: values.password,
+    });
   }
 
   render() {
@@ -55,22 +81,46 @@ class Login extends React.Component<IProps, IState> {
               src="./assets/img/logo.png"
             />
             <div className={styles.loginContainer}>
-              <p style={{padding: 3}}>Account Login</p>
+              <p style={{ padding: 3 }}>Account Login</p>
               <hr />
               <div className={styles.loginContainerContent}>
-                <p>Username</p>
-                <input type="text" />
-                <p>Password</p>
-                <input type="text" />
-                <div className={styles.loginContainerAction}>
-                  <input type="checkbox" />
-                  <p>Remember Username</p>
-                  <div style={{flex: 1}} />
-                  <div>
-                    <Button onClick={() => alert('log in')}>Log In</Button>
-                  </div>
-                </div>
-                <Link style={{color: 'skyblue'}} to="/home">Fuck this I want see the homepage</Link>
+                <Formik
+                  initialValues={{
+                    username: LocalStorage.instance.data!.username,
+                    password: '',
+                    rememberMe: Boolean(LocalStorage.instance.data!.username),
+                  } as IFormValues}
+                  validationSchema={Yup.object().shape({
+                    username: Yup.string().min(3, 'too short').required(),
+                    password: Yup.string().min(3, 'too short').required(),
+                  })}
+                  onSubmit={this.handleLogIn}
+                  render={(bag: FormikProps<IFormValues>) => (
+                    <Form>
+                      <p>Username</p>
+                      <Field name="username" render={(fieldProps: FieldProps<IFormValues>) =>
+                        <input type="text" {...fieldProps.field} />
+                      } />
+                      <p>Password</p>
+                      <Field name="password" render={(fieldProps: FieldProps<IFormValues>) =>
+                        <input type="password" {...fieldProps.field} />
+                      } />
+                      <div className={styles.loginContainerAction}>
+                        <Field name="rememberMe" render={(fieldProps: FieldProps<IFormValues>) =>
+                          <input type="checkbox" {...fieldProps.field} />
+                        } />
+                        <p>Remember Username</p>
+                        <div style={{ flex: 1 }} />
+                        <div>
+                          <Button
+                            onClick={bag.submitForm}
+                            disabled={!bag.isValid || bag.isSubmitting}
+                          >Log In</Button>
+                        </div>
+                      </div>
+                    </Form>
+                  )}
+                />
                 <hr />
                 <div className={styles.bottomActions}>
                   <p>Don't have an account? Sign up now!</p>

@@ -1,16 +1,16 @@
-import { IActionWithPayload } from "../actions/helpers";
-import { AuthAction } from "../actions/auth";
+import { IActionWithPayload } from '../actions/helpers';
+import { AuthAction } from '../actions/auth';
 
 export type AuthState = {
   error: string,
   loading: boolean,
-  token: string
-}
+  token: string,
+};
 
 const defaultState: AuthState = {
-  error: "",
+  error: '',
   loading: false,
-  token: "",
+  token: '',
 };
 
 export default function auth(state = defaultState, action: IActionWithPayload<string>) {
@@ -18,24 +18,24 @@ export default function auth(state = defaultState, action: IActionWithPayload<st
     case AuthAction.LOGIN:
       return {
         ...defaultState,
-        loading: true
+        loading: true,
       };
 
     case AuthAction.LOGIN_SUCCESS:
       return {
         ...defaultState,
-        token: action.payload
+        token: action.payload,
       };
 
     case AuthAction.LOGIN_ERROR:
       return {
         ...defaultState,
-        error: action.payload
+        error: action.payload,
       };
 
     case AuthAction.LOGOUT:
       return {
-        ...defaultState
+        ...defaultState,
       };
 
     default:

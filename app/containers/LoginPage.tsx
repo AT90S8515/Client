@@ -1,16 +1,41 @@
-import * as React from "react";
-import Login, { IProps } from "../components/Login";
-import { AuthState } from "../reducers/auth";
-import { connect, Dispatch } from "react-redux";
-import { bindActionCreators } from "redux";
-import * as AuthActions from "../actions/auth";
+import * as React from 'react';
+import Login from '../components/Login';
+import { AuthState } from '../reducers/auth';
+import { connect } from 'react-redux';
+import { Action } from 'redux';
+import {
+  login,
+  logout,
+} from '../actions/auth';
+import { IAppState, IDispatchFunc } from '../reducers';
 
-function mapStateToProps(state: AuthState): Partial<IProps> {
-  return state;
+interface IStoreProps {
+  authStore: AuthState;
+}
+interface IStoreActions {
+  login: typeof login;
+  logout: typeof logout;
 }
 
-function mapDispatchToProps(dispatch: Dispatch<AuthState>): Partial<IProps> {
-  return bindActionCreators(AuthActions as any, dispatch);
-}
+interface IProps extends IStoreProps, IStoreActions { }
 
-export default (connect(mapStateToProps, mapDispatchToProps)(Login) as any as React.StatelessComponent<IProps>);
+// tslint:disable-next-line:variable-name
+const LoginPageContainer: React.SFC<IProps> = (props: IProps) => {
+  return (
+    <Login
+      login={props.login}
+      {...props.authStore}
+    />
+  );
+};
+
+export default connect(
+  (state: IAppState) => ({
+    authStore: state.auth,
+  } as IStoreProps),
+  // tslint:disable-next-line:variable-name
+  (_dispatch: IDispatchFunc<Action>) => ({
+    login,
+    logout,
+  } as IStoreActions),
+)(LoginPageContainer);
