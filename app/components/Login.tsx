@@ -29,6 +29,13 @@ class Login extends React.Component<IProps, IState> {
     muted: LocalStorage.instance.data!.loginMusicMuted,
   };
 
+  public componentWillReceiveProps(nextProps: IProps) {
+    if (this.props.error !== nextProps.error) {
+      // Login error occured
+      alert(nextProps.error);
+    }
+  }
+
   private handleVideoRef = (ref: HTMLVideoElement | null) => {
     // Sometimes the ref is null
     if (!ref) return;
@@ -99,11 +106,19 @@ class Login extends React.Component<IProps, IState> {
                     <Form>
                       <p>Username</p>
                       <Field name="username" render={(fieldProps: FieldProps<IFormValues>) =>
-                        <input type="text" {...fieldProps.field} />
+                        <input
+                          type="text"
+                          disabled={fieldProps.form.isSubmitting}
+                          {...fieldProps.field}
+                        />
                       } />
                       <p>Password</p>
                       <Field name="password" render={(fieldProps: FieldProps<IFormValues>) =>
-                        <input type="password" {...fieldProps.field} />
+                        <input
+                          type="password"
+                          disabled={fieldProps.form.isSubmitting}
+                          {...fieldProps.field}
+                        />
                       } />
                       <div className={styles.loginContainerAction}>
                         <Field name="rememberMe" render={(fieldProps: FieldProps<IFormValues>) =>

@@ -1,18 +1,19 @@
-import { call, cancel, cancelled, fork, put, take } from "redux-saga/effects";
-import { SagaIterator } from "redux-saga";
-import { AuthAction, loginError, loginSuccess } from "../actions/auth";
-import Axios from "axios";
+import { call, cancel, cancelled, fork, put, take } from 'redux-saga/effects';
+import { SagaIterator } from 'redux-saga';
+import { AuthAction, loginError, loginSuccess, LoginActionPayload } from '../actions/auth';
+// tslint:disable-next-line:import-name
+import Axios from 'axios';
 
-const { history } = require("../store/configureStore");
+const { history } = require('../store/configureStore');
 
 function* loginWatcher(): SagaIterator {
   while (true) {
     // Get the email and password of the LOGIN action
     const action = yield take(AuthAction.LOGIN);
-    const { email, password } = action.payload;
+    const { username, password } = action.payload as LoginActionPayload;
 
     // Hand it over to the loginFlow generator
-    const task = yield fork(loginFlow, email, password);
+    const task = yield fork(loginFlow, username, password);
 
     // If for some reason user is bashing the logout button or receiving an error, move on.
     yield take([AuthAction.LOGIN_ERROR, AuthAction.LOGOUT]);
@@ -31,10 +32,10 @@ function* loginFlow(email: string, password: string): SagaIterator {
 
     yield put(loginSuccess(token));
 
-    console.log("TOKEN", token);
-    localStorage.setItem("token", JSON.stringify(token));
+    console.log('TOKEN', token);
+    localStorage.setItem('token', JSON.stringify(token));
 
-    history.push("/home");
+    history.push('/home');
   } catch (err) {
     yield put(loginError(err));
   } finally {
@@ -47,14 +48,14 @@ function* loginFlow(email: string, password: string): SagaIterator {
 function* login(email: string, password: string) {
   const result = yield Axios.post(`${process.env.API_URL}/auth/login`, {
     email,
-    password
-  }).then(res => console.log("RES", res));
+    password,
+  }).then(res => console.log('RES', res));
 
   return result;
 }
 
 function logout() {
-  localStorage.removeItem("token");
+  localStorage.removeItem('token');
 
   // history.push("/login");
 }

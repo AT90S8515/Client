@@ -7,7 +7,12 @@ export enum AuthAction {
   LOGOUT = 'LOGOUT',
 }
 
-export const login = actionCreator<{ username: string, password: string }>(AuthAction.LOGIN);
+export interface LoginActionPayload {
+  username: string;
+  password: string;
+}
+
+export const login = actionCreator<LoginActionPayload>(AuthAction.LOGIN);
 export const loginSuccess = actionCreator<string>(AuthAction.LOGIN_SUCCESS);
 export const loginError = actionCreator<string>(AuthAction.LOGIN_ERROR);
 export const logout = actionCreatorVoid(AuthAction.LOGOUT);
