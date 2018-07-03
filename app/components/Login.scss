@@ -26,7 +26,7 @@
     height: 100px;
     padding-left: 100px;
     padding-right: 20px;
-    padding-bottom: 75px;
+    padding-bottom: 50px;
     position: fixed;
     left: 0;
     right: 0;
@@ -116,5 +116,17 @@
   .bottomActions p {
     padding-top: 2px;
     padding-bottom: 2px;
+  }
+
+  .disclaimerContainer {
+    color: rgb(240,240,240);
+    text-align: center;
+    font-size: 13px;
+    padding: 20px;
+  }
+
+  .disclaimerSmall {
+    font-size: 11px;
+    margin-top: 10px;
   }
 }

@@ -129,6 +129,14 @@ class Login extends React.Component<IProps, IState> {
                 </div>
               </div>
             </div>
+            <div className={styles.disclaimerContainer}>
+              <p>
+                League of Memories is a free to play, community based version of League of Legends back in season 4.
+              </p>
+              <p className={styles.disclaimerSmall}>
+              League of Memories isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.
+              </p>
+            </div>
           </div>
         </div>
         <div className={styles.bottomContainer}>
