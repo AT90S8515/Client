@@ -10,13 +10,42 @@ export interface IProps extends RouteComponentProps<any>, AuthState {
   login({}): void;
 }
 
-export default class Home extends React.Component<IProps> {
+export interface IState {
+  muted: boolean;
+}
+
+class Login extends React.Component<IProps, IState> {
+  private backgroundVideo: HTMLVideoElement | null;
+
+  public state = {
+    muted: false,
+  };
+
+  private handleVideoRef = (ref: HTMLVideoElement | null) => {
+    // Sometimes the ref is null
+    if (!ref) return;
+
+    this.backgroundVideo = ref;
+    // Set default volume
+    this.backgroundVideo.volume = this.state.muted ? 0.0 : 0.2;
+  }
+
+  private handleMutedChange = (checked: boolean) => {
+    this.setState({ muted: checked });
+    this.backgroundVideo!.volume = checked ? 0.0 : 0.2;
+  }
+
   render() {
     // const { login } = this.props;
 
     return (
       <div className={styles.container}>
-        <video autoPlay muted loop className={styles.video}>
+        <video
+          ref={this.handleVideoRef}
+          autoPlay
+          loop
+          className={styles.video}
+        >
           <source src="./assets/video/login.mp4" type="video/mp4" />
         </video>
         <div className={styles.topContainer}>
@@ -52,8 +81,17 @@ export default class Home extends React.Component<IProps> {
             </div>
           </div>
         </div>
-        <div className={styles.bottomContainer}></div>
+        <div className={styles.bottomContainer}>
+          <input
+            type="checkbox"
+            checked={this.state.muted}
+            onChange={data => this.handleMutedChange(data.target.checked)}
+          />
+          <p>Disable Login Music</p>
+        </div>
       </div>
     );
   }
 }
+
+export default Login;

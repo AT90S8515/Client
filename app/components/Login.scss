@@ -24,6 +24,22 @@
 
   .bottomContainer {
     height: 100px;
+    padding-left: 100px;
+    padding-right: 20px;
+    padding-bottom: 125px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    color: rgb(240,240,240);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 14px;
+  }
+
+  .bottomContainer input {
+    margin-right: 5px;
   }
 
   .topContentContainer {
