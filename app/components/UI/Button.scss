@@ -1,0 +1,32 @@
+:local {
+  .container {
+    background: linear-gradient(to bottom, #1a35ad 17%,#2048ca 43%,#183491 94%);
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #EEE;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 2s ease-in-out;
+  }
+  .container:hover {
+    background: linear-gradient(to bottom, #2a44b4 17%,#345ad8 43%,#243c8b 94%);
+  }
+
+  .containerDisabled {
+    background: linear-gradient(to bottom, #2b2c2e 17%,#1f2020 43%,#161618 94%);
+    border-radius: 3px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: rgb(139, 139, 139);
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
